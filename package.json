@@ -1,0 +1,22 @@
+{
+  "name": "dex",
+  "version": "1.0.0",
+  "description": "Ethereum 201 course at Ivan on Tech - DEX assignment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sneicode/DEX.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sneicode/DEX/issues"
+  },
+  "homepage": "https://github.com/sneicode/DEX#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.2.0"
+  }
+}
