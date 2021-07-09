@@ -6,6 +6,7 @@ import "../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
+
 contract Wallet is Ownable {
     using SafeMath for uint256;
 
