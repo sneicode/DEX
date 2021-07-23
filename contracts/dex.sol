@@ -26,10 +26,17 @@ contract Dex is Wallet {
     function getOrderBook(bytes32 ticker, Side side) view public returns (Order[] memory){
         return orderBook[ticker][uint(side)];
     }
- }
-    // function createLimitOrder() {}
+ 
+    function createLimitOrder(Side side, bytes32 ticker, uint amount, uint price) public {
 
-   
+    }
+
+    function depositEth() payable public {
+        balances[msg.sender][bytes32("ETH")] += balances[msg.sender][bytes32("ETH")];
+        
+    }
+
+}  
 
     // how to call orderBook entries
     // function getOrderBook(bytes32("LINK"), Side.BUY) // Side.BUY is same as 0 as its the first enum parameter
