@@ -1,7 +1,5 @@
-const Link = artifacts.require("Link");
-const Dex = artifacts.require("Dex");
+const Link = artifacts.require("Link")
 
-module.exports = async function (deployer, network, accounts) {
+module.exports = async function(deployer, network, accounts) {
   await deployer.deploy(Link)
-
-};
+}

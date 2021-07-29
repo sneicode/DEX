@@ -17,8 +17,6 @@ contract Wallet is Ownable {
 
     mapping(bytes32 => Token) public tokenMapping;
     bytes32[] public tokenList;
-
-
     mapping(address => mapping(bytes32 => uint256)) public balances;
 
     modifier tokenExists(bytes32 ticker){
@@ -26,15 +24,16 @@ contract Wallet is Ownable {
         _; 
     }
 
+
     function addToken(bytes32 ticker, address tokenAddress) onlyOwner external {
         tokenMapping[ticker] = Token(ticker, tokenAddress);
         tokenList.push(ticker);
     }
 
-    function deposit(uint amount, bytes32 ticker) tokenExists(ticker) external{
+
+    function deposit(uint amount, bytes32 ticker) tokenExists(ticker) external {
         IERC20(tokenMapping[ticker].tokenAddress).transferFrom(msg.sender, address(this), amount);
         balances[msg.sender][ticker] = balances[msg.sender][ticker].add(amount);
-        
     }
 
     function withdraw(uint amount, bytes32 ticker) tokenExists(ticker) external {
@@ -42,6 +41,16 @@ contract Wallet is Ownable {
 
         balances[msg.sender][ticker] = balances[msg.sender][ticker].sub(amount);
         IERC20(tokenMapping[ticker].tokenAddress).transfer(msg.sender, amount);
+    }
+
+    function depositEth() payable external {
+        balances[msg.sender][bytes32("ETH")] += balances[msg.sender][bytes32("ETH")].add(msg.value); 
+    } 
+
+    function withdrawEth(uint amount) external {
+        require(balances[msg.sender][bytes32("ETH")] > amount, "not enough ETH balance");
+        balances[msg.sender][bytes32("ETH")] -= balances[msg.sender][bytes32("ETH")].sub(amount);
+        msg.sender.call{value:amount};
     }
 
 }
