@@ -59,7 +59,7 @@ contract("Dex", accounts => {
         }
     })
     // 3.b) The first order ([0]) in the SELL order book should have the lowest price
-    it("should trow an error if the first order in the BUY order book doesn't have the highest price", async () => {
+    it("should throw an error if the first order in the SELL order book doesn't have the lowest price", async () => {
         let dex = await Dex.deployed()
         let link = await Link.deployed()
         await link.approve(dex.address, 500)
@@ -68,8 +68,8 @@ contract("Dex", accounts => {
         await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 1, 200) 
 
         let orderbook = dex.getOrderBook(web3.utils.fromUtf8("LINK"), 1)
+        
         //assert(orderbook.length > 0)
-
         for(let i = 0; i < orderbook.length -1; i++) {
             assert(orderbook[i].price <= orderbook[i+1].price, "unordered sell order book")
         }
