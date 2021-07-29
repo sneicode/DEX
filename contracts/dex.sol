@@ -32,7 +32,7 @@ contract Dex is Wallet {
         return orderBook[ticker][uint(side)];
     }
  
-    function createLimitOrder(Side side, bytes32 ticker, uint amount, uint price) public view {
+    function createLimitOrder(Side side, bytes32 ticker, uint amount, uint price) public {
         if(side == Side.BUY){
             // check if user has enough ETH for buy order
             require(balances[msg.sender][bytes32("ETH")] >= amount.mul(price), "insufficient funds");
@@ -41,14 +41,14 @@ contract Dex is Wallet {
             // check if user has enough tokens for sell order
             require(balances[msg.sender][ticker] >= amount, "insufficient funds");
         }
-        /*
+        
             // this creates the order object / loads the orderbook depending on side (buy or sell)
             Order[] storage orders = orderBook[ticker][uint(side)];
             // this creates the new order
             orders.push(
                 Order(nextOrderId, msg.sender, side, ticker, amount, price)
                 );
-            
+            /*
             // bubble sort
             uint i = orders.length > 0 ? orders.length -1 : 0;
 
