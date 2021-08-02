@@ -48,8 +48,9 @@ contract Dex is Wallet {
             orders.push(
                 Order(nextOrderId, msg.sender, side, ticker, amount, price)
                 );
-            /*
+            
             // bubble sort
+            // start iteration at the end of the array
             uint i = orders.length > 0 ? orders.length -1 : 0;
 
             if(side == Side.BUY){
@@ -57,6 +58,7 @@ contract Dex is Wallet {
                     if(orders[i - 1].price > orders[i].price) {
                         break;
                     }
+                    // using existing values and their relative positions to swap order 
                     Order memory orderToMove = orders[i - 1];
                     orders[i - 1] = orders[i];
                     orders[i] = orderToMove;
@@ -75,13 +77,42 @@ contract Dex is Wallet {
                 }
             }
 
-            nextOrderId++;
+            nextOrderId++;        
+    }
+
+
+    function createMarketOrder (Side side, bytes32 ticker, uint amount) public {
+
+        uint256 ethValue;
+        ethValue = _getEthValue();
+
+        Order[] storage buyOrders = orderBook[ticker][Side.BUY];
         
-    }*/
-    } 
+        if(side == Side.SELL){
+            // check if seller has enough tokens for trade
+            require(balances[msg.sender][ticker] >= amount, "insufficient token balance");
+            }
+        else if(side == Side.BUY){
+            // check if buyer has enough ETH for trade
+            require(balances[msg.sender][bytes32("ETH")] >= ethValue, "insufficient funds");
+        }
+    }
 
-}  
+    function _getEthValue(uint amount) public view {
+        require(orders.length != 0, "no orders in orderbook");
 
-    // how to call orderBook entries
-    // function getOrderBook(bytes32("LINK"), Side.BUY) // Side.BUY is same as 0 as its the first enum parameter
+        Order[] storage buyOrders = orderBook[ticker][uint(side)];
+
+            if(side == Side.BUY){
+            
+                for(uint i = 0; i <= orders.length; i++){
+
+                }
+            }
+    }
+    }
+
+
+
+} 
 
