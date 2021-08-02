@@ -81,35 +81,8 @@ contract Dex is Wallet {
     }
 
 
-    function createMarketOrder (Side side, bytes32 ticker, uint amount) public {
+    function createMarketOrder(Side side, bytes32 ticker, uint amount) public {
 
-        uint256 ethValue;
-        ethValue = _getEthValue();
-
-        Order[] storage buyOrders = orderBook[ticker][Side.BUY];
-        
-        if(side == Side.SELL){
-            // check if seller has enough tokens for trade
-            require(balances[msg.sender][ticker] >= amount, "insufficient token balance");
-            }
-        else if(side == Side.BUY){
-            // check if buyer has enough ETH for trade
-            require(balances[msg.sender][bytes32("ETH")] >= ethValue, "insufficient funds");
-        }
-    }
-
-    function _getEthValue(uint amount) public view {
-        require(orders.length != 0, "no orders in orderbook");
-
-        Order[] storage buyOrders = orderBook[ticker][uint(side)];
-
-            if(side == Side.BUY){
-            
-                for(uint i = 0; i <= orders.length; i++){
-
-                }
-            }
-    }
     }
 
 
