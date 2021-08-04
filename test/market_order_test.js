@@ -4,7 +4,7 @@ const truffleAssert = require("truffle-assertions")
 
 contract("Dex", accounts => {
     
-    // 1. When creating a SELL market order, the seller needs to have sufficient tokens for the trade
+    // When creating a SELL market order, the seller needs to have sufficient tokens for the trade
     it("should throw when creating a sell market order with a 0 token balance ", async () => {
         let dex = await Dex.deployed()
         let balance = await dex.balances(accounts[0], web3.utils.fromUtf8("LINK"))
@@ -15,20 +15,9 @@ contract("Dex", accounts => {
         )
     })
 
-    // 2. When creating a BUY market order, the seller needs to have sufficient ETH for the trade
-    it("should throw when creating a SELL market order with a 0 token balance", async () => {
-        let dex = await Dex.deployed()
-
-        let balance = await dex.balances(accounts[0], web3.utils.fromUtf8("ETH"))
-        assert.equal(balance.toNumber(), 0, "initial ETH balance is not 0")
-
-        await truffleAssert.reverts(
-            dex.createMarketOrder(0, web3.utils.fromUtf8("LINK"), 10)
-        )
-    })
     
-    // 3. Market orders can be submitted even if the order book is empty
-    it("should throw when creating a SELL market order with a 0 token balance", async () => {
+    // Market orders can be submitted even if the order book is empty
+    it("Market orders can be submitted even if the order book is empty", async () => {
         let dex = await Dex.deployed()
 
         await dex.depositEth({value: 50000})
@@ -41,8 +30,8 @@ contract("Dex", accounts => {
         )
     })
 
-    // 4. Market orders should be filled until the order book is 100% filled
-    it("Market orders should not fill more limit orders than the order amount", async () => {
+    // Market orders should be filled until the order book is 100% filled
+    it("Market orders should not fill more limit orders than the market order amount", async () => {
         let dex = await Dex.deployed()
         let link = await Link.deployed()
 
@@ -69,9 +58,9 @@ contract("Dex", accounts => {
         await dex.deposit(50, web3.utils.fromUtf8("LINK"), {from: accounts[3]})
 
         // create 3 SELL side limit orders, 1 each for accounts 1 - 3
-        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 200, {from: account[1]})
+        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 300, {from: account[1]})
         await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 400, {from: account[2]})
-        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 300, {from: account[3]})
+        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 500, {from: account[3]})
 
         // create market order that fills 2/3 of the order book
         await dex.createMarketOrder(0, web3.utils.fromUtf8("LINK"), 10)
@@ -81,10 +70,10 @@ contract("Dex", accounts => {
         // assure length is 1, (2 thirds consumed and 1 limitOrder left)
         assert(orderbook.length == 1, "remaining SELL side orders is not 1")
         assert(orderbook[0].filled == 0, "remaining SELL side order should be untouched")
-        
+    
     })
         
-    // 5. Market orders should be filled until the order book is empty 
+    // Market orders should be filled until the order book is empty 
     it("Market orders should be filled until market order is empty", async () => {
         let dex = await Dex.deployed()
         
@@ -94,32 +83,30 @@ contract("Dex", accounts => {
 
         // add two new limit orders // no need for adding token, nor transfer nor deosit
         // as that is still available from last test
-        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 300, {from: account[3]})
-        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 400, {from: account[2]})
+        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 400, {from: account[1]})
+        await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 5, 500, {from: account[2]})
 
         // check buyer link balance before adding new market order
         let beforeBalance = await dex.balances(accounts[0], web3.utils.fromUtf8("LINK"))
 
-        // create Market order that goes beyond available tokens (15 missing)
+        // create Market order that goes beyond available tokens (15 available, 35 missing)
         await dex.createMarketOrder(0, web3.utils.fromUtf8("LINK"), 50)
 
         // check buyer link balance after adding new market order
         let updatedBalance = await dex.balances(accounts[0], web3.utils.fromUtf8("LINK"))
 
-        // buyer should have 30 link more even that marketorder was for 50 link
-        assert.equal(beforeBalance + 15, updatedBalance)
+        // buyer should have 15 link more even that marketorder was for 50 link
+        assert.equal(beforeBalance.toNumber() + 15, updatedBalance.toNumber())
 
         // assure order book is empty
         assert(orderbook.length == 0, "order book on the SELL side not empty")
     })
 
 
-    // 6. the eth balance of the buyer should decrease with the filled amount
+    // the eth balance of the buyer should decrease with the filled amount
     it("the eth balance of the buyer should decrease with the filled ammount", async () => {
         let dex = await Dex.deployed()
         let link = await Link.deployed()
-
-        await dex.depositEth({value: 10000})
 
         // seller deposit link and creates sell limit order for 1 Link
         await link.approve(dex.address, 500, {from: accounts[1]})
@@ -130,10 +117,10 @@ contract("Dex", accounts => {
         await dex.createMarketOrder(0, web3.utils.fromUtf8("LINK"), 1)
         let updatedBalance = await dex.balances(accounts[0], web3.utils.fromUtf8("ETH"))
 
-        assert.equal(beforeBalance - 300, updatedBalance)
+        assert.equal(beforeBalance.toNumber() - 300, updatedBalance.toNumber())
     })
 
-    // 7. the token balances of the limit order sellers should decrease with the filled amount
+    // the token balances of the limit order sellers should decrease with the filled amount
     it("the token balances of the limit order sellers should decrease with the filled amount", async () => {
         let dex = await Dex.deployed()
         let link = await Link.deployed() 
@@ -145,7 +132,6 @@ contract("Dex", accounts => {
         
         // seller account [2] deposit link
         await link.approve(dex.address, 500, {from: accounts[2]})
-
         await dex.deposit(50, web3.utils.fromUtf8("LINK"), {from: accounts[2]})
         
         await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 1, 300, {from: accounts[1]})
@@ -155,16 +141,17 @@ contract("Dex", accounts => {
         let account1beforeBalance = await dex.balances(accounts[1], web3.utils.fromUtf8("LINK"))
         let account2beforeBalance = await dex.balances(accounts[2], web3.utils.fromUtf8("LINK"))
         
+        // account[0] buys 2 available Link
         await dex.createMarketOrder(0, web3.utils.fromUtf8("LINK"), 2)
 
         let account1updatedBalance = await dex.balances(accounts[1], web3.utils.fromUtf8("LINK"))
         let account2updatedBalance = await dex.balances(accounts[2], web3.utils.fromUtf8("LINK"))
 
-        assert.equal(account1beforeBalance - 1, account1updatedBalance.toNumber())
-        assert.equal(account2beforeBalance - 1, account2updatedBalance.toNumber())
+        assert.equal(account1beforeBalance.toNumber() - 1, account1updatedBalance.toNumber())
+        assert.equal(account2beforeBalance.toNumber() - 1, account2updatedBalance.toNumber())
     })
 
-    //8. Filled limit orders should be removed from the orderbook
+    // Filled limit orders should be removed from the orderbook
     it("Filled limit orders should be removed from the orderbook", async () => {
         let dex = await Dex.deployed()
         let link = await Link.deployed() 
