@@ -1,12 +1,3 @@
-// BUY SIDE
-// 1. The user must have ETH deposited such that deposited eth >= buy order value (always buy with ETH, so need more ETH in account than the order value of the buy order)
-// 2. The user (different user) must have enough tokens deposited such that token balance >= sell order amount (enough LINK tokens to sell)
-// 3. The first order ([0]) in the BUY order book should have the highest price
-// (above is equal: the order of the elements should be ordered on price from highest to lowest)
-// add two more myself
-
-// 1. input parameters: address, ticker, ethBalance, buy order value
-
 const Dex = artifacts.require("Dex")
 const Link = artifacts.require("Link")
 const truffleAssert = require("truffle-assertions")
