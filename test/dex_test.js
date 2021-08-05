@@ -24,7 +24,7 @@ contract("Dex", accounts => {
         )
     })
 
-    // 2. The user (different user) must have enough tokens deposited such that token balance >= sell order amount (enough LINK tokens to sell)
+    // The user (different user) must have enough tokens deposited such that token balance >= sell order amount (enough LINK tokens to sell)
     it("should throw an error if token balance is too low when creating a SELL limit order", async () => {
         await dex.addToken(web3.utils.fromUtf8("LINK"), link.address, {from: accounts[0]})
         await truffleAssert.reverts(
@@ -36,7 +36,7 @@ contract("Dex", accounts => {
             dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 10, 1)
         )
     })
-    // 3.a) The first order ([0]) in the BUY order book should have the highest price
+    // The first order ([0]) in the BUY order book should have the highest price
     it("should throw an error if the first order in the BUY order book doesn't have the highest price", async () => {
         await link.approve(dex.address, 500)
         await dex.depositEth({value: 3000})
@@ -51,7 +51,7 @@ contract("Dex", accounts => {
             assert(orderbook[i].price >= orderbook[i+1].price, "unordered buy order book")
         }
     })
-    // 3.b) The first order ([0]) in the SELL order book should have the lowest price
+    // The first order ([0]) in the SELL order book should have the lowest price
     it("should throw an error if the first order in the SELL order book doesn't have the lowest price", async () => {
         await link.approve(dex.address, 500)
         await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 1, 300)
