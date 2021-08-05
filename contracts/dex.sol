@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
 
@@ -49,8 +48,7 @@ contract Dex is Wallet {
                 Order(nextOrderId, msg.sender, side, ticker, amount, price, 0)
                 );
             
-            // bubble sort
-            // start iteration at the end of the array
+            // bubble sort, start iteration at the end of the array
             uint i = orders.length > 0 ? orders.length -1 : 0;
 
             if(side == Side.BUY){
@@ -135,9 +133,7 @@ contract Dex is Wallet {
                 balances[orders[i].trader][ticker] = balances[orders[i].trader][ticker].add(filled);
                 balances[orders[i].trader]["ETH"] = balances[orders[i].trader]["ETH"].sub(cost);
             }   
-    
         }   
-
 
             // remove all 100% filled orders from the orderbook
             while(orders.length > 0 && orders[0].filled == orders[0].amount){
@@ -147,8 +143,6 @@ contract Dex is Wallet {
                 }
                 orders.pop();
             }
-          
     }
-
 } 
 
